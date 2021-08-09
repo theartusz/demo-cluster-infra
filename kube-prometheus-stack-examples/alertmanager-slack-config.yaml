@@ -1,0 +1,75 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: slack-config
+  namespace: monitoring
+spec:
+  receivers:
+  - name: default
+    slackConfigs:
+    - actions:
+      - text: 'Runbook :notebook:'
+        type: button
+        url: '{{ (index .Alerts 0).Annotations.runbook_url }}'
+      - text: 'Query :mag:'
+        type: button
+        url: '{{ (index .Alerts 0).GeneratorURL }}'
+      - text: 'Dashboard :computer:'
+        type: button
+        url: '{{ (index .Alerts 0).Annotations.dashboard }}'
+      - text: 'Silence :no_bell:'
+        type: button
+        url: |-
+          {{ .ExternalURL }}/#/silences/new?filter=%7B {{- range .CommonLabels.SortedPairs -}}
+              {{- if ne .Name "alertname" -}}
+                  {{- .Name }}%3D"{{- .Value | urlquery -}}"%2C%20
+              {{- end -}}
+          {{- end -}} alertname%3D"{{ .CommonLabels.alertname }}"%7D
+      apiURL:
+        key: address
+        name: slack-webhook
+      channel: '#tmp-velero-alert-test'
+      sendResolved: true
+      text: |-
+        {{ range .Alerts }}
+        *Alert:* {{ .Labels.alertname }}{{ if .Labels.severity }} - `{{ .Labels.severity }}`{{ end }}
+        {{- if .Annotations.summary }}
+        *Cluster: * bs-dev-aks-blue
+        *Summary:* {{ .Annotations.summary }}
+        {{- end }}
+        {{- if .Annotations.description }}
+        *Description:* {{ .Annotations.description }}
+        {{- end }}
+        {{- if .Annotations.message }}
+        *Message:* {{ .Annotations.message }}
+        {{- end }}
+        *Details:*
+          {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+          {{ end }}
+        {{ end }}
+      title: |-
+        {{ define "__alert_severity_prefix_title" -}}
+          {{ if ne .Status "firing" -}}
+          :heavy_check_mark:
+          {{- else if eq .CommonLabels.severity "critical" -}}
+          :fire:
+          {{- else if eq .CommonLabels.severity "warning" -}}
+          :warning:
+          {{- else if eq .CommonLabels.severity "info" -}}
+          :information_source:
+          {{- else -}}
+          :question:
+          {{- end }}
+        {{- end }}
+        [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ template "__alert_severity_prefix_title" . }} {{ .CommonLabels.alertname }} for {{ .CommonLabels.job }}
+      username: bs-dev-aks-blue
+  route:
+    groupBy:
+    - job
+    groupInterval: 10s
+    groupWait: 30s
+    matchers:
+    - name: severity
+      value: critical
+    receiver: default
+    repeatInterval: 12h

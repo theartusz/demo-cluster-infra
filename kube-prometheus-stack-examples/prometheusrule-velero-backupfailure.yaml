@@ -1,0 +1,32 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: velero-backupfailure
+  namespace: monitoring
+# labels must be same as in kind: Prometheus -> ruleSelector _> matchLabels
+  labels:
+    app: kube-prometheus-stack
+    release: prometheus-stack
+spec:
+  groups:
+  - name: velero-backupfailures
+    rules:
+    - alert: VeleroBackupPartialFailures
+      annotations:
+        summary: Velero backup {{ $labels.schedule }} has {{ $value | humanize }} ratio of partialy failed backups to attempted backups over last 3h.
+        description: 'Partial backup failure for job="{{ $labels.job }}" with shedule="{{ $labels.schedule }}" feiled in namespace="{{ $labels.namespace }}"'
+      expr: |-
+        sum(increase(velero_backup_partial_failure_total{schedule!=""}[180m]) / increase(velero_backup_attempt_total{schedule!=""}[180m])) by (schedule, namespace, job) > 0.6
+      for: 2m
+      labels:
+        severity: warning
+    - alert: VeleroBackupFailures
+      annotations:
+        summary: Velero backup {{ $labels.schedule }} has {{ $value | humanize }} ratio of failed backups to attempted backups over last 3h.
+        description: 'Backup failed for job="{{ $labels.job }}" with shedule="{{ $labels.schedule }}" feiled in namespace="{{ $labels.namespace }}"'
+      expr: |-
+        sum(increase(velero_backup_failure_total{schedule!=""}[3m]) / increase(velero_backup_attempt_total{schedule!=""}[3m])) by (schedule, namespace, job) > 0.6
+      for: 2m
+      labels:
+        severity: critical
+        namespace: monitoring

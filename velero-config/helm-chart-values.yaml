@@ -1,0 +1,26 @@
+image:
+  repository: velero/velero
+  tag: v1.5.2
+  pullPolicy: IfNotPresent
+
+initContainers:
+  - name: velero-plugin-for-azure
+    image: velero/velero-plugin-for-microsoft-azure:v1.2.0
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+
+configuration:
+  provider: "${provider}"
+  backupStorageLocation:
+    provider: "${provider}"
+    bucket: "${backup_container_name}"
+    config:
+      resourceGroup: "${backup_resource_group}"
+      storageAccount: "${storage_account_name}"
+      subscriptionId: "${subscription_id}"
+
+credentials:
+  useSecret: true
+  existingSecret: "${velero_secret}"

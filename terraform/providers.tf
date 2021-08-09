@@ -1,0 +1,69 @@
+terraform {
+  required_providers {
+    // Add version constraint to providers to avoid automatic
+    // upgrades resulting in breaking changes.
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=2.46.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "2.0.3"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">=2.0.3"
+    }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = "1.6.0"
+    }
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.10.0"
+    }
+    flux = {
+      source  = "fluxcd/flux"
+      version = "0.2.0"
+    }
+    github = {
+      source  = "integrations/github"
+      version = ">= 4.5.2"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "3.1.0"
+    }
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+
+provider "kubernetes" {
+  host                   = azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.cluster_ca_certificate)
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.host
+    username               = azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.username
+    password               = azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.password
+    client_certificate     = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.client_certificate)
+    client_key             = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.client_key)
+    cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.cluster_ca_certificate)
+  }
+}
+
+provider "flux" {
+  alias = "test"
+}
+
+provider "github" {
+  owner = var.github_owner
+  token = var.github_token
+}
