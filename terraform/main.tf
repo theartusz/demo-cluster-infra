@@ -1,14 +1,14 @@
 module "kube_prometheus_stack" {
-  source = "./kube_prometheus_stack"
+  source = "./modules/kube_prometheus_stack"
   depends_on = [
     module.nginx
   ]
 
-  monitoring_something = var.monitoring.monitoring
+  monitoring = var.monitoring.monitoring
 }
 
 #module "fluxcd" {
-#  source = "./fluxcd"
+#  source = "./modules/fluxcd"
 #
 #  flux = {
 #    namespace   = var.flux.namespace
@@ -22,15 +22,15 @@ module "kube_prometheus_stack" {
 #  }
 #}
 
-module "magnifik_boutique" {
-  source = "./magnifik-boutique"
-
-  app_name   = var.app_name
-  dns_prefix = var.dns_prefix
-}
+#module "magnifik_boutique" {
+#  source = "./modules/magnifik-boutique"
+#
+#  app_name   = var.app_name
+#  dns_prefix = var.dns_prefix
+#}
 
 #module "velero" {
-#  source = "./velero_backup"
+#  source = "./modules/velero_backup"
 #
 #  azure = {
 #    subscription_id = var.azure.subscription_id
@@ -45,8 +45,16 @@ module "magnifik_boutique" {
 #  }
 #}
 
+module "cert_manager" {
+  source = "./modules/cert_manager"
+
+  cert_manager = {
+    name = var.cert_manager.name
+  }
+}
+
 module "nginx" {
-  source = "./nginx"
+  source = "./modules/nginx"
 
   nginx_ingress_controller = var.nginx_ingress_controller
 }

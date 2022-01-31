@@ -58,3 +58,9 @@ variable "flux" {
     target_path = string
   })
 }
+
+variable "cert_manager" {
+  type = object({
+    name = string
+  })
+}
