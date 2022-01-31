@@ -30,7 +30,7 @@ module "kube_prometheus_stack" {
 #}
 
 #module "velero" {
-#  source = "./modules/velero_backup"
+#  source = "./modules/velero"
 #
 #  azure = {
 #    subscription_id = var.azure.subscription_id

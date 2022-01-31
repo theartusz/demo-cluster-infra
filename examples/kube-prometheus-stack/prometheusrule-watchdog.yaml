@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: watchdog-opsgenie
+  namespace: monitoring
+# for prometheus to load new prometheusrules labels must match
+# ruleSelector labels in kind Prometheus configuration
+# k get prometheus <name of file>
+  labels:
+    app: kube-prometheus-stack
+    release: kube-prometheus-stack
+spec:
+  groups:
+  - name: general.rules
+    rules:
+    - alert: Watchdog
+      annotations:
+        description: |
+          This is an alert meant to ensure that the entire alerting pipeline is functional.
+          This alert is always firing, therefore it should always be firing in Alertmanager
+          and always fire against a receiver. There are integrations with various notification
+          mechanisms that send a notification when this alert is not firing. For example the
+          "DeadMansSnitch" integration in PagerDuty.
+        runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-watchdog
+        summary: An alert that should always be firing to verify that Alertmanager
+          is working properly.
+      expr: vector(1)
+      labels: #labels are important for sending notification to the right channel defined in alertmanagerconfig
+        severity: none
+        namespace: monitoring

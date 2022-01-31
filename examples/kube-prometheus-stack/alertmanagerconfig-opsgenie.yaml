@@ -1,0 +1,50 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  labels:
+    managedBy: team-sre
+  name: alertmanager-opsgenie-config
+  namespace: monitoring
+spec:
+  receivers:
+  - name: deadMansSwitch
+    webhookConfigs:
+      # url link to the specific heartbeat, replace test with heartbeat name
+      - url: 'https://api.opsgenie.com/v2/heartbeats/<hearbeat-name>/ping'
+        sendResolved: true
+        httpConfig:
+          basicAuth:
+          # reference to secret containing login credentals
+            password:
+              key: apiKey
+              name: opsgenie
+            username:
+              key: username
+              name: opsgenie
+  route:
+    groupBy:
+    - job
+    groupInterval: 10s
+    groupWait: 0s
+    repeatInterval: 10s
+    matchers:
+      - name: alertname
+        value: Watchdog
+      - name: namespace
+        value: monitoring
+    receiver: deadmansswitch
+
+---
+# secret containing login credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: monitoring
+  name: opsgenie
+type: Opaque
+data:
+  # apiKey in encoded in base64
+  apiKey: <YOUR-PASSWORD>
+  # ':' in base 64 - fix suggested in https://github.com/prometheus-operator/prometheus-operator/issues/3970#issuecomment-888893008
+  username: Og==
+
