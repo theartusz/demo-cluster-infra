@@ -19,5 +19,5 @@ resource "helm_release" "prometheus_stack" {
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
   namespace  = var.monitoring
-  values     = ["${file("../kube-prometheus-stack-config/helm-chart-values.yaml")}"]
+  values     = ["${file("../config/kube-prometheus-stack-config/helm-chart-values.yaml")}"]
 }

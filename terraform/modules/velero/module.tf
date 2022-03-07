@@ -76,7 +76,7 @@ resource "azurerm_role_assignment" "velero" {
 
 # inject azure env variables into the templete file
 data "template_file" "velero_credentials" {
-  template = file("../velero-config/credentials-template")
+  template = file("../config/velero-config/credentials-template")
   vars = {
     AZURE_SUBSCRIPTION_ID = var.azure.subscription_id
     AZURE_TENANT_ID       = var.azure.tenant_id
@@ -100,7 +100,7 @@ resource "kubernetes_secret" "velero_credentials" {
 
 # inject values into velero helm chart values template
 data "template_file" "velero_values" {
-  template = file("../velero-config/helm-chart-values.yaml")
+  template = file("../config/velero-config/helm-chart-values.yaml")
   vars = {
     provider              = "azure"
     storage_account_name  = azurerm_storage_account.velero.name

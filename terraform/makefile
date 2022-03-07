@@ -1,6 +1,7 @@
 # ?= sets default value
 config ?= variables.tfvars.json
 subscription_id := $(shell jq -r '.azure.subscription_id' $(config))
+app_name := $(shell jq -r '.app_name' $(config))
 
 # without . azure would be executed as first if just executing make
 .azure:
@@ -20,3 +21,8 @@ apply:
 
 destroy: .azure
 	terraform destroy -var-file=$(config)
+
+aks-cred: .azure
+	az aks get-credentials \
+		--resource-group $(app_name) \
+		--name $(app_name)
