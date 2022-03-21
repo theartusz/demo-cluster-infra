@@ -1,26 +1,41 @@
-module "kube_prometheus_stack" {
-  source = "./modules/kube_prometheus_stack"
-  depends_on = [
-    module.nginx
-  ]
-
-  monitoring = var.monitoring.monitoring
-}
-
-#module "fluxcd" {
-#  source = "./modules/fluxcd"
+#module "nginx" {
+#  source = "./modules/nginx"
 #
-#  flux = {
-#    namespace   = var.flux.namespace
-#    target_path = var.flux.target_path
-#  }
-#  github = {
-#    branch                = var.github.branch
-#    repository_name       = var.github.repository_name
-#    repository_visibility = var.github.repository_visibility
-#    owner                 = var.github_owner
+#  nginx_ingress_controller = var.nginx_ingress_controller
+#}
+
+#module "kube_prometheus_stack" {
+#  source = "./modules/kube_prometheus_stack"
+#  depends_on = [
+#    module.nginx
+#  ]
+#
+#  monitoring = var.monitoring.monitoring
+#}
+
+#module "cert_manager" {
+#  source = "./modules/cert_manager"
+#
+#  cert_manager = {
+#    name = var.cert_manager.name
 #  }
 #}
+
+module "fluxcd" {
+  source = "./modules/fluxcd"
+
+  flux = {
+    namespace   = var.flux.namespace
+    target_path = var.flux.target_path
+  }
+  github = {
+    branch                = var.github.branch
+    repository_name       = var.github.repository_name
+    repository_visibility = var.github.repository_visibility
+    owner                 = var.github.owner
+    token                 = var.token
+  }
+}
 
 #module "magnifik_boutique" {
 #  source = "./modules/magnifik-boutique"
@@ -45,19 +60,6 @@ module "kube_prometheus_stack" {
 #  }
 #}
 
-module "cert_manager" {
-  source = "./modules/cert_manager"
-
-  cert_manager = {
-    name = var.cert_manager.name
-  }
-}
-
-module "nginx" {
-  source = "./modules/nginx"
-
-  nginx_ingress_controller = var.nginx_ingress_controller
-}
 
 resource "azurerm_resource_group" "k8s_resource_group" {
   name     = var.app_name

@@ -4,7 +4,7 @@ terraform {
     // upgrades resulting in breaking changes.
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">=2.46.0"
+      version = ">=2.98.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -24,7 +24,7 @@ terraform {
     }
     flux = {
       source  = "fluxcd/flux"
-      version = "0.2.0"
+      version = "0.11.3"
     }
     github = {
       source  = "integrations/github"
@@ -39,6 +39,8 @@ terraform {
 
 provider "azurerm" {
   features {}
+
+  subscription_id = var.azure.subscription_id
 }
 
 provider "kubernetes" {
@@ -61,9 +63,4 @@ provider "helm" {
 
 provider "flux" {
   alias = "test"
-}
-
-provider "github" {
-  owner = var.github_owner
-  token = var.github_token
 }

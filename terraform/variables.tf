@@ -37,19 +37,16 @@ variable "velero" {
 
 variable "github" {
   type = object({
+    owner                 = string
     repository_name       = string
     repository_visibility = string
     branch                = string
   })
 }
 
-variable "github_token" {
+variable "token" {
   type      = string
   sensitive = true
-}
-
-variable "github_owner" {
-  type = string
 }
 
 variable "flux" {

@@ -6,9 +6,9 @@ app_name := $(shell jq -r '.app_name' $(config))
 # without . azure would be executed as first if just executing make
 .azure:
 	$(eval subscription_name := $(shell az account show --subscription $(subscription_id) | jq -r '.name'))
-	@echo "logging into $(subscription_name) with subscription_id: $(subscription_id)"
-	@az account set --subscription "3b654f60-250b-4e4a-a64d-9af05160a324"
-	@kubectl config set-cluster no-context
+	echo "logging into $(subscription_name) with subscription_id: $(subscription_id)"
+	az login > /dev/null && \
+	az account set --subscription $(subscription_id)
 
 init: .azure
 	terraform init
@@ -18,9 +18,10 @@ plan: .azure
 
 apply:
 	terraform apply terraform-plan
+	@kubectl config set-cluster no-context
 
 destroy: .azure
-	terraform destroy -var-file=$(config)
+	terraform plan -destroy -var-file=$(config) -out=terraform-plan
 
 aks-cred: .azure
 	az aks get-credentials \

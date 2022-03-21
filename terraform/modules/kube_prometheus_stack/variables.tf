@@ -1,3 +1,0 @@
-variable "monitoring" {
-  type = string
-}

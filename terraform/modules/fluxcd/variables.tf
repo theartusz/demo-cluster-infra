@@ -11,5 +11,6 @@ variable "github" {
     repository_name       = string
     repository_visibility = string
     owner                 = string
+    token                 = string
   })
 }

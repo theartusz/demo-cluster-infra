@@ -1,28 +1,7 @@
-terraform {
-  required_providers {
-    flux = {
-      source  = "fluxcd/flux"
-      version = "0.2.0"
-    }
-    github = {
-      source  = "integrations/github"
-      version = ">= 4.5.2"
-    }
-    tls = {
-      source  = "hashicorp/tls"
-      version = "3.1.0"
-    }
-    kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.10.0"
-    }
-  }
-}
-
 # creates private key to be used as deployment keys for repo
 resource "tls_private_key" "main" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P256"
 }
 
 # create flux-system namespace
@@ -40,6 +19,13 @@ resource "kubernetes_namespace" "flux_system" {
 
 data "flux_install" "main" {
   target_path = "test-cluster"
+  # option to specify which components of flux to install
+  #components = [
+  #  "source-controller",
+  #  "kustomize-controller",
+  #  "image-automation-controller",
+  #  "image-reflector-controller"
+  #]
 }
 
 data "flux_sync" "main" {
@@ -57,7 +43,6 @@ data "kubectl_file_documents" "install" {
 data "kubectl_file_documents" "sync" {
   content = data.flux_sync.main.content
 }
-
 locals {
   install = [for v in data.kubectl_file_documents.install.documents : {
     data : yamldecode(v)
@@ -70,7 +55,7 @@ locals {
     }
   ]
   # ssh-rsa key to fluxcd github repo to download fluxcd from
-  known_hosts = "github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=="
+  known_hosts = "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg="
 }
 
 # apply kubernetes manifests
@@ -103,50 +88,38 @@ resource "kubernetes_secret" "main" {
   }
 }
 
-# create new github repository
-resource "github_repository" "main" {
-  name       = var.github.repository_name
-  visibility = var.github.repository_visibility
-  auto_init  = true
-}
-
-# make branch default
-resource "github_branch_default" "main" {
-  repository = github_repository.main.name
-  branch     = var.github.branch
-}
-
-# add deploy key to the newly created git repo
 resource "github_repository_deploy_key" "main" {
-  title      = "flux-key"
-  repository = github_repository.main.name
+  title      = "fluxcd-key"
+  repository = var.github.repository_name
   key        = tls_private_key.main.public_key_openssh
   read_only  = true
-  depends_on = [
-    github_repository.main
-  ]
 }
 
-# create file in gihub containing flux crd's
-resource "github_repository_file" "install" {
-  repository = github_repository.main.name
-  file       = data.flux_install.main.path
-  content    = data.flux_install.main.content
-  branch     = var.github.branch
+resource "kubernetes_network_policy" "allow_all_ingress" {
+  metadata {
+    name      = "allow-all-ingress"
+    namespace = kubernetes_namespace.flux_system.metadata.0.name
+  }
+
+  spec {
+    pod_selector {}
+    ingress {}
+    policy_types = ["Ingress"]
+  }
 }
 
-# create file in github containing GitRepository, Kustomization
-resource "github_repository_file" "sync" {
-  repository = github_repository.main.name
-  file       = data.flux_sync.main.path
-  content    = data.flux_sync.main.content
-  branch     = var.github.branch
+resource "kubernetes_network_policy" "allow_all_egress" {
+  metadata {
+    name      = "allow-all-egress"
+    namespace = kubernetes_namespace.flux_system.metadata.0.name
+  }
+
+  spec {
+    pod_selector {}
+    egress {}
+    policy_types = ["Egress"]
+  }
 }
 
-# create file in github with kind: Kustomization
-resource "github_repository_file" "kustomize" {
-  repository = github_repository.main.name
-  file       = data.flux_sync.main.kustomize_path
-  content    = data.flux_sync.main.kustomize_content
-  branch     = var.github.branch
-}
+# add deploy key to specified repo to give flux access to that repo
+
