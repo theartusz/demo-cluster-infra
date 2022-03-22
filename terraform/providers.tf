@@ -10,10 +10,6 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "2.0.3"
     }
-    helm = {
-      source  = "hashicorp/helm"
-      version = ">=2.0.3"
-    }
     azuread = {
       source  = "hashicorp/azuread"
       version = "1.6.0"
@@ -50,17 +46,13 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.cluster_ca_certificate)
 }
 
-provider "helm" {
-  kubernetes {
-    host                   = azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.host
-    username               = azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.username
-    password               = azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.password
-    client_certificate     = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.client_certificate)
-    client_key             = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.client_key)
-    cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.cluster_ca_certificate)
-  }
-}
-
 provider "flux" {
   alias = "test"
+}
+
+provider "kubectl" {
+  host                   = azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.cluster_ca_certificate)
 }

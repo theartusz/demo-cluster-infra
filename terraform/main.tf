@@ -1,26 +1,3 @@
-#module "nginx" {
-#  source = "./modules/nginx"
-#
-#  nginx_ingress_controller = var.nginx_ingress_controller
-#}
-
-#module "kube_prometheus_stack" {
-#  source = "./modules/kube_prometheus_stack"
-#  depends_on = [
-#    module.nginx
-#  ]
-#
-#  monitoring = var.monitoring.monitoring
-#}
-
-#module "cert_manager" {
-#  source = "./modules/cert_manager"
-#
-#  cert_manager = {
-#    name = var.cert_manager.name
-#  }
-#}
-
 module "fluxcd" {
   source = "./modules/fluxcd"
 
@@ -29,12 +6,12 @@ module "fluxcd" {
     target_path = var.flux.target_path
   }
   github = {
-    branch                = var.github.branch
-    repository_name       = var.github.repository_name
-    repository_visibility = var.github.repository_visibility
-    owner                 = var.github.owner
-    token                 = var.token
+    branch          = var.github.branch
+    repository_name = var.github.repository_name
+    owner           = var.github.owner
+    token           = var.token
   }
+  dependencies = ["azurerm_kubernetes_cluster.magnifik_k8s"]
 }
 
 #module "magnifik_boutique" {

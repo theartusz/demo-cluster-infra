@@ -1,3 +1,13 @@
+# Needed to allow some resources in this module to depend
+# on outside resources. The module it self cannot use the
+# `depends_on` block without failing because of terraform
+# limitations.
+resource "null_resource" "dependencies" {
+  triggers = {
+    depends_on = "${join("", var.dependencies)}"
+  }
+}
+
 # creates private key to be used as deployment keys for repo
 resource "tls_private_key" "main" {
   algorithm   = "ECDSA"
@@ -61,7 +71,7 @@ locals {
 # apply kubernetes manifests
 resource "kubectl_manifest" "install" {
   for_each   = { for v in local.install : lower(join("/", compact([v.data.apiVersion, v.data.kind, lookup(v.data.metadata, "namespace", ""), v.data.metadata.name]))) => v.content }
-  depends_on = [kubernetes_namespace.flux_system]
+  depends_on = [kubernetes_namespace.flux_system, null_resource.dependencies]
   yaml_body  = each.value
 }
 
@@ -88,6 +98,7 @@ resource "kubernetes_secret" "main" {
   }
 }
 
+# add deploy key to specified repo to give flux access to that repo
 resource "github_repository_deploy_key" "main" {
   title      = "fluxcd-key"
   repository = var.github.repository_name
@@ -120,6 +131,3 @@ resource "kubernetes_network_policy" "allow_all_egress" {
     policy_types = ["Egress"]
   }
 }
-
-# add deploy key to specified repo to give flux access to that repo
-

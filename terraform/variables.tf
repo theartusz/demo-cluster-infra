@@ -15,13 +15,6 @@ variable "azure" {
   })
 }
 
-variable "monitoring" {
-  type = object({
-    prometheus = string
-    monitoring = string
-  })
-}
-
 variable "dns_prefix" {
   type = string
 }
@@ -53,11 +46,5 @@ variable "flux" {
   type = object({
     namespace   = string
     target_path = string
-  })
-}
-
-variable "cert_manager" {
-  type = object({
-    name = string
   })
 }

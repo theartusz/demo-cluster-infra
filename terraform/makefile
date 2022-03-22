@@ -7,6 +7,7 @@ app_name := $(shell jq -r '.app_name' $(config))
 .azure:
 	$(eval subscription_name := $(shell az account show --subscription $(subscription_id) | jq -r '.name'))
 	echo "logging into $(subscription_name) with subscription_id: $(subscription_id)"
+	@az account show > /dev/null || \
 	az login > /dev/null && \
 	az account set --subscription $(subscription_id)
 
@@ -14,6 +15,7 @@ init: .azure
 	terraform init
 
 plan: .azure
+	@terraform fmt
 	terraform plan --var-file=$(config) -out=terraform-plan
 
 apply:
