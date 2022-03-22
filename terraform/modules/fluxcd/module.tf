@@ -30,12 +30,14 @@ resource "kubernetes_namespace" "flux_system" {
 data "flux_install" "main" {
   target_path = "test-cluster"
   # option to specify which components of flux to install
-  #components = [
-  #  "source-controller",
-  #  "kustomize-controller",
-  #  "image-automation-controller",
-  #  "image-reflector-controller"
-  #]
+  components = [
+    "source-controller",
+    "kustomize-controller",
+    "helm-controller",
+    "notification-controller",
+    "image-automation-controller",
+    "image-reflector-controller"
+  ]
 }
 
 data "flux_sync" "main" {
