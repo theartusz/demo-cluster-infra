@@ -27,19 +27,31 @@ resource "kubernetes_namespace" "flux_system" {
       metadata[0].labels,
     ]
   }
+
+  provisioner "local-exec" {
+    when       = destroy
+    command    = "kubectl config use-context ${self.metadata.0.labels.kubernetes_name}"
+    on_failure = continue
+  }
+
+  provisioner "local-exec" {
+    when       = destroy
+    command    = "kubectl patch customresourcedefinition helmcharts.source.toolkit.fluxcd.io helmreleases.helm.toolkit.fluxcd.io helmrepositories.source.toolkit.fluxcd.io kustomizations.kustomize.toolkit.fluxcd.io gitrepositories.source.toolkit.fluxcd.io -p '{\"metadata\":{\"finalizers\":null}}'"
+    on_failure = continue
+  }
 }
 
 data "flux_install" "main" {
   target_path = "test-cluster"
   # option to specify which components of flux to install
-  components = [
-    "source-controller",
-    "kustomize-controller",
-    "helm-controller",
-    "notification-controller",
-    "image-automation-controller",
-    "image-reflector-controller"
-  ]
+  #components = [
+  #  "source-controller",
+  #  "kustomize-controller",
+  #  "helm-controller",
+  #  "notification-controller",
+  #  "image-automation-controller",
+  #  "image-reflector-controller"
+  #]
 }
 
 data "flux_sync" "main" {
