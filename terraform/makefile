@@ -12,11 +12,20 @@ app_name := $(shell jq -r '.app_name' $(config))
 	az account set --subscription $(subscription_id)
 
 init: .azure
-	terraform init
+ifdef upgrade
+	terraform init \
+		-var-file=$(config) \
+		-upgrade
+else
+	terraform init \
+		-var-file=$(config)
+endif
 
 plan: .azure
 	@terraform fmt
-	terraform plan --var-file=$(config) -out=terraform-plan
+	terraform plan \
+		-var-file=$(config) \
+		-out=terraform-plan
 
 apply:
 	terraform apply terraform-plan
