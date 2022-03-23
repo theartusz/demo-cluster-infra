@@ -1,6 +1,6 @@
 version: 2
 updates:
-  - package-manager: "Terraform"
+  - package-ecosystem: "Terraform"
     directory: "terraform"
     schedule:
       interval: daily
