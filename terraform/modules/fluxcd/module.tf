@@ -18,6 +18,8 @@ resource "tls_private_key" "main" {
 resource "kubernetes_namespace" "flux_system" {
   metadata {
     name = var.flux.namespace
+    # label as a value holder for provisioner
+    labels = { kubernetes_name = "magnifik-boutique" }
   }
 
   lifecycle {
