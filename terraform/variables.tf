@@ -1,18 +1,20 @@
+variable "azure" {
+  type = object({
+    subscription_id     = string
+    tenant_id           = string
+    dns_zone_name       = string
+    location            = string
+    resource_group_name = string
+    acr_name            = string
+  })
+}
+
 variable "app_name" {
   type = string
 }
 
 variable "nginx_ingress_controller" {
   type = string
-}
-
-variable "azure" {
-  type = object({
-    subscription_id = string
-    tenant_id       = string
-    dns_zone_name   = string
-    location        = string
-  })
 }
 
 variable "dns_prefix" {

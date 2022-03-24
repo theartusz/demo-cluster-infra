@@ -44,14 +44,14 @@ resource "kubernetes_namespace" "flux_system" {
 data "flux_install" "main" {
   target_path = "test-cluster"
   # option to specify which components of flux to install
-  #components = [
-  #  "source-controller",
-  #  "kustomize-controller",
-  #  "helm-controller",
-  #  "notification-controller",
-  #  "image-automation-controller",
-  #  "image-reflector-controller"
-  #]
+  components = [
+    "source-controller",
+    "kustomize-controller",
+    "helm-controller",
+    "notification-controller",
+    "image-automation-controller",
+    "image-reflector-controller"
+  ]
 }
 
 data "flux_sync" "main" {
@@ -119,7 +119,7 @@ resource "github_repository_deploy_key" "main" {
   title      = "fluxcd-key"
   repository = var.github.repository_name
   key        = tls_private_key.main.public_key_openssh
-  read_only  = true
+  read_only  = false # flux image updater needs write access
 }
 
 resource "kubernetes_network_policy" "allow_all_ingress" {

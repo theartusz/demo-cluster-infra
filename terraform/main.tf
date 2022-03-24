@@ -1,3 +1,42 @@
+resource "azurerm_resource_group" "k8s_resource_group" {
+  name     = var.azure.resource_group_name
+  location = var.azure.location
+}
+
+resource "azurerm_kubernetes_cluster" "magnifik_k8s" {
+  name                = var.app_name
+  location            = azurerm_resource_group.k8s_resource_group.location
+  resource_group_name = azurerm_resource_group.k8s_resource_group.name
+  dns_prefix          = var.dns_prefix
+
+  default_node_pool {
+    name       = "default"
+    node_count = 2
+    vm_size    = "Standard_D2_v2"
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  tags = {
+    Environment = "Production"
+  }
+}
+
+resource "azurerm_dns_zone" "dns_zone" {
+  name                = var.azure.dns_zone_name
+  resource_group_name = azurerm_resource_group.k8s_resource_group.name
+}
+
+resource "azurerm_container_registry" "acr" {
+  name                = var.azure.acr_name
+  resource_group_name = azurerm_resource_group.k8s_resource_group.name
+  location            = azurerm_resource_group.k8s_resource_group.location
+  sku                 = "Basic"
+  admin_enabled       = false
+}
+
 module "fluxcd" {
   source = "./modules/fluxcd"
 
@@ -38,28 +77,3 @@ module "fluxcd" {
 #}
 
 
-resource "azurerm_resource_group" "k8s_resource_group" {
-  name     = var.app_name
-  location = var.azure.location
-}
-
-resource "azurerm_kubernetes_cluster" "magnifik_k8s" {
-  name                = var.app_name
-  location            = azurerm_resource_group.k8s_resource_group.location
-  resource_group_name = azurerm_resource_group.k8s_resource_group.name
-  dns_prefix          = var.dns_prefix
-
-  default_node_pool {
-    name       = "default"
-    node_count = 2
-    vm_size    = "Standard_D2_v2"
-  }
-
-  identity {
-    type = "SystemAssigned"
-  }
-
-  tags = {
-    Environment = "Production"
-  }
-}
