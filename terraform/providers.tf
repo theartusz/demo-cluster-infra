@@ -56,3 +56,9 @@ provider "kubectl" {
   client_key             = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.client_key)
   cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.magnifik_k8s.kube_config.0.cluster_ca_certificate)
 }
+
+provider "github" {
+  #owner needs to be defined for github_actions_secret to work
+  owner = var.github.owner
+  token = var.GITHUB_TOKEN
+}

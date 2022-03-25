@@ -34,7 +34,39 @@ resource "azurerm_container_registry" "acr" {
   resource_group_name = azurerm_resource_group.k8s_resource_group.name
   location            = azurerm_resource_group.k8s_resource_group.location
   sku                 = "Basic"
-  admin_enabled       = false
+  admin_enabled       = true
+}
+
+resource "github_actions_secret" "acr-registry" {
+  repository      = var.app_angular.repository
+  secret_name     = var.app_angular.action_secret_registry
+  plaintext_value = azurerm_container_registry.acr.login_server
+}
+
+resource "github_actions_secret" "acr-username" {
+  repository      = var.app_angular.repository
+  secret_name     = var.app_angular.action_secret_username
+  plaintext_value = azurerm_container_registry.acr.admin_username
+}
+
+resource "github_actions_secret" "acr-password" {
+  repository      = var.app_angular.repository
+  secret_name     = var.app_angular.action_secret_password
+  plaintext_value = azurerm_container_registry.acr.admin_password
+}
+
+resource "kubectl_manifest" "acr-auth" {
+  sensitive_fields = ["data"]
+  yaml_body        = <<YAML
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: acr-cred
+    namespace: flux-system
+  type: kubernetes.io/dockerconfigjson
+  data:
+    .dockerconfigjson: ${base64encode({ "auths" : { "${azurerm_container_registry.acr.login_server}" : { "username" : "${azurerm_container_registry.acr.admin_username}", "password" : "${azurerm_container_registry.acr.admin_password}", "auth" : "${base64encode(azurerm_container_registry.acr.login_server)}" } } })}
+YAML
 }
 
 module "fluxcd" {
@@ -47,8 +79,8 @@ module "fluxcd" {
   github = {
     branch          = var.github.branch
     repository_name = var.github.repository_name
-    owner           = var.github.owner
-    token           = var.token
+    owner           = var.GITHUB_OWNER
+    token           = var.GITHUB_TOKEN
   }
   dependencies = ["azurerm_kubernetes_cluster.magnifik_k8s"]
 }

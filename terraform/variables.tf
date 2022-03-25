@@ -13,6 +13,16 @@ variable "app_name" {
   type = string
 }
 
+variable "app_angular" {
+  type = object({
+    name                   = string
+    repository             = string
+    action_secret_username = string
+    action_secret_password = string
+    action_secret_registry = string
+  })
+}
+
 variable "nginx_ingress_controller" {
   type = string
 }
@@ -39,9 +49,13 @@ variable "github" {
   })
 }
 
-variable "token" {
+variable "GITHUB_TOKEN" {
   type      = string
   sensitive = true
+}
+
+variable "GITHUB_OWNER" {
+  type = string
 }
 
 variable "flux" {
