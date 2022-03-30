@@ -64,3 +64,7 @@ variable "flux" {
     target_path = string
   })
 }
+
+variable "tags" {
+  type = map(any)
+}

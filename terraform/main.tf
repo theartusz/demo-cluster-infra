@@ -1,6 +1,7 @@
 resource "azurerm_resource_group" "k8s_resource_group" {
   name     = var.azure.resource_group_name
   location = var.azure.location
+  tags     = var.tags
 }
 
 resource "azurerm_kubernetes_cluster" "magnifik_k8s" {
@@ -19,14 +20,13 @@ resource "azurerm_kubernetes_cluster" "magnifik_k8s" {
     type = "SystemAssigned"
   }
 
-  tags = {
-    Environment = "Production"
-  }
+  tags = var.tags
 }
 
 resource "azurerm_dns_zone" "dns_zone" {
   name                = var.azure.dns_zone_name
   resource_group_name = azurerm_resource_group.k8s_resource_group.name
+  tags                = var.tags
 }
 
 resource "azurerm_container_registry" "acr" {
@@ -35,6 +35,7 @@ resource "azurerm_container_registry" "acr" {
   location            = azurerm_resource_group.k8s_resource_group.location
   sku                 = "Basic"
   admin_enabled       = true
+  tags                = var.tags
 }
 
 resource "github_actions_secret" "acr-registry" {
