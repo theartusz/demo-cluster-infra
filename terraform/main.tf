@@ -23,12 +23,6 @@ resource "azurerm_kubernetes_cluster" "magnifik_k8s" {
   tags = var.tags
 }
 
-resource "azurerm_dns_zone" "dns_zone" {
-  name                = var.azure.dns_zone_name
-  resource_group_name = azurerm_resource_group.k8s_resource_group.name
-  tags                = var.tags
-}
-
 resource "azurerm_container_registry" "acr" {
   name                = var.azure.acr_name
   resource_group_name = azurerm_resource_group.k8s_resource_group.name
