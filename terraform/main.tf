@@ -50,19 +50,19 @@ resource "github_actions_secret" "acr-password" {
   plaintext_value = azurerm_container_registry.acr.admin_password
 }
 
-resource "kubectl_manifest" "acr-auth" {
-  sensitive_fields = ["data"]
-  yaml_body        = <<YAML
-  apiVersion: v1
-  kind: Secret
-  metadata:
-    name: acr-cred
-    namespace: flux-system
-  type: kubernetes.io/dockerconfigjson
-  data:
-    .dockerconfigjson: ${base64encode({ "auths" : { "${azurerm_container_registry.acr.login_server}" : { "username" : "${azurerm_container_registry.acr.admin_username}", "password" : "${azurerm_container_registry.acr.admin_password}", "auth" : "${base64encode(azurerm_container_registry.acr.login_server)}" } } })}
-YAML
-}
+#resource "kubectl_manifest" "acr-auth" {
+#  sensitive_fields = ["data"]
+#  yaml_body        = <<YAML
+#  apiVersion: v1
+#  kind: Secret
+#  metadata:
+#    name: acr-cred
+#    namespace: flux-system
+#  type: kubernetes.io/dockerconfigjson
+#  data:
+#    .dockerconfigjson: ${base64encode({ "auths" : { "${azurerm_container_registry.acr.login_server}" : { "username" : "${azurerm_container_registry.acr.admin_username}", "password" : "${azurerm_container_registry.acr.admin_password}", "auth" : "${base64encode(azurerm_container_registry.acr.login_server)}" } } })}
+#YAML
+#}
 
 module "fluxcd" {
   source = "./modules/fluxcd"
