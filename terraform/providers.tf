@@ -12,7 +12,7 @@ terraform {
     }
     azuread = {
       source  = "hashicorp/azuread"
-      version = "1.6.0"
+      version = "2.19.1"
     }
     kubectl = {
       source  = "gavinbunney/kubectl"
