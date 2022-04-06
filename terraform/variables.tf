@@ -23,10 +23,6 @@ variable "app_angular" {
   })
 }
 
-variable "nginx_ingress_controller" {
-  type = string
-}
-
 variable "dns_prefix" {
   type = string
 }
