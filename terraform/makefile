@@ -1,6 +1,7 @@
 # ?= sets default value
 config ?= variables.tfvars.json
 subscription_id := $(shell jq -r '.azure.subscription_id' $(config))
+resource_group_name := $(shell jq -r '.azure.resource_group_name' $(config))
 app_name := $(shell jq -r '.app_name' $(config))
 
 # without . azure would be executed as first if just executing make
@@ -36,5 +37,5 @@ destroy: .azure
 
 aks-cred: .azure
 	az aks get-credentials \
-		--resource-group $(app_name) \
+		--resource-group $(resource_group_name) \
 		--name $(app_name)
