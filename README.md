@@ -1,5 +1,4 @@
 # Intro
-The cluster is currently pointing to EVRY BGO PROD tenant, MAZE_TEST subscription. If you want to point it to other azure account change the values in `variables.tfvars.json`.
 The terraform script is configured to be executed with `make`. Possible `make` commands are:
 - init
 - plan
