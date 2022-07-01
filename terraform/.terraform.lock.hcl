@@ -80,21 +80,22 @@ provider "registry.terraform.io/hashicorp/azurerm" {
 }
 
 provider "registry.terraform.io/hashicorp/kubernetes" {
-  version     = "2.0.3"
-  constraints = ">= 1.10.0, 2.0.3"
+  version     = "2.12.0"
+  constraints = ">= 1.10.0, 2.12.0"
   hashes = [
-    "h1:bWKA/gbCuIArnpNYZrc73LBhVwRZOLfb06Z7fk8HcKQ=",
-    "zh:3847733636ed2aca8694227ee6936fecc6cec9573818ecf64acc2a01a4fb3ae4",
-    "zh:44d3e88227174d2e51e0273e732e54bb5f5d8150bbf1adecd2be198c857a0264",
-    "zh:7c147baeac90ddc71b8c106409dc2e06e6fe04448a0ae36c7ef919b8b27c8d5f",
-    "zh:832ebd1eec844fdc00ecbc5e694ecf532d0c7a94f2a1697ea0c7bc159696d529",
-    "zh:920c8f64925d346a0621aadede6a4ac1bbe650f16c2074a0a6b5eeb7a5c35cf7",
-    "zh:a26906cd3aeb28f402972154dbb3ae1ac6d739ce3e4b00906c9d4b1e263d5a56",
-    "zh:a7b3cbd06684f843f700ee9281c583cc593e00e3acc2c0a34f6dad4e35a1ec60",
-    "zh:b43c05ade832995a09c40a1c2f080586f38de1edc8c46be2e6f90b96c58a2482",
-    "zh:cba2a979889e79ffe48bb5ea7e63f88c344ae2cd7a341afb77b3c8d417658d6c",
-    "zh:e00b2ec7357a58a435a69146da3c256178caab83a6574969d4660b69996c7955",
-    "zh:f95f179f68aed39b8d73d7914176baf74509d74f90a1e3a600a8eb4461f8f0a3",
+    "h1:d9e/U+LvNNR4WNgVUevYqS3MOg0SnhTysJIxb84313c=",
+    "zh:0b9495de4cde4bff48941409cab65ef66ea0d260fcf3d6919fb7f915911fb8da",
+    "zh:31b8817e521d4928f2d19735bf54cbedb91cf70b93a16f4edf5495eed3f9ea33",
+    "zh:3ec7dc2d3d432f8f7b44a108a21bea44de310c37f2414eb2913762dbd01c112a",
+    "zh:4949e4cbc9cd1a633b621d217552b3254a439178cf562886c09fe386119ecf66",
+    "zh:5a4451328e4940bb0b235e17944b48e75017eb37dce6470142dd899c07512ae1",
+    "zh:8123b3fdc7a46239dfdc49392aeacafb532d32724e85b00fc84b7ba77a337856",
+    "zh:8d7229be22e0534c7568a3b60e9ed0b4f468794521cdcaf32c4f6ca727436ede",
+    "zh:9548f2ce05a5de59bd71a0770cae3b80095145c96754f3698c608a44fdd5d0de",
+    "zh:c245f1bafc8c2c6adb8dc38ca7ba43ce35134c1f9de3a3370187dec701aa38a1",
+    "zh:d0496e2fed1787186bd4cfb821db8cbb8dedb3c13e78195e3572ec7ae01ed100",
+    "zh:f2d515a13e40a2d3757230b6bd0ba469877d6a103cf6ac6d9b06655efc99808d",
+    "zh:f569b65999264a9416862bca5cd2a6177d94ccb0424f3a4ef424428912b9cb3c",
   ]
 }
 
