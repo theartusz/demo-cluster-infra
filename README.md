@@ -8,4 +8,4 @@ The terraform script is configured to be executed with `make`. Possible `make` c
 
 # User guide
 - create github token with read and write rights to repo and use it when executing `make plan/apply`
-- when creating new `dns_zone` paste nameserver addresses to your domain host
+- when creating new `dns_zone` paste nameserver addresses to your domain registrar
