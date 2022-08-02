@@ -1,6 +1,8 @@
 variable "flux" {
   type = object({
+    # name of namespace where to install flux
     namespace   = string
+    # target path for source kustomize file
     target_path = string
   })
 }
