@@ -1,11 +1,5 @@
 # Intro
-The terraform script is configured to be executed with `make`. Possible `make` commands are:
-- init
-- plan
-- apply
-- destroy
-- aks-cred
+Repository which holds configuration for demo kubernetes cluster. The configuration is trying to be modular with vision to reuse modules for different cloud providers. Main configuration is located in `terraform` folder and each cloud provider has it's subfolders. To deploy the configuration navigate to the cloud provider of your choice and execute terraform from there.
 
-# User guide
-- create github token with read and write rights to repo and use it when executing `make plan/apply`
+# Notes
 - when creating new `dns_zone` paste nameserver addresses to your domain registrar
