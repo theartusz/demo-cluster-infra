@@ -19,7 +19,7 @@ resource "kubernetes_namespace" "flux_system" {
   metadata {
     name = var.flux.namespace
     # label as a value holder for provisioner
-    labels = { kubernetes_name = "magnifik-boutique" }
+    labels = { kubernetes_name = "example" }
   }
 
   lifecycle {
@@ -36,7 +36,7 @@ resource "kubernetes_namespace" "flux_system" {
 
   provisioner "local-exec" {
     when       = destroy
-    command    = "kubectl patch customresourcedefinition helmcharts.source.toolkit.fluxcd.io helmreleases.helm.toolkit.fluxcd.io helmrepositories.source.toolkit.fluxcd.io kustomizations.kustomize.toolkit.fluxcd.io gitrepositories.source.toolkit.fluxcd.io -p '{\"metadata\":{\"finalizers\":null}}'"
+    command    = "kubectl patch customresourcedefinition helmcharts.source.toolkit.fluxcd.io helmreleases.helm.toolkit.fluxcd.io helmrepositories.source.toolkit.fluxcd.io kustomizations.kustomize.toolkit.fluxcd.io gitrepositories.source.toolkit.fluxcd.io imagerepositories.image.toolkit.fluxcd.io imageupdateautomations.image.toolkit.fluxcd.io imagepolicies.image.toolkit.fluxcd.io -p '{\"metadata\":{\"finalizers\":null}}'"
     on_failure = continue
   }
 }
