@@ -24,6 +24,14 @@ terraform {
       source  = "integrations/github"
       version = ">= 4.24.1"
     }
+    gitlab = {
+      source  = "gitlabhq/gitlab"
+      version = "3.16.1"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.6.0"
+    }
   }
 }
 
@@ -46,4 +54,17 @@ provider "kubernetes" {
 provider "github" {
   owner = var.github_owner
   token = var.github_token
+}
+
+provider "gitlab" {
+  base_url = "https://gitlab.sikt.no/api/v4/"
+  token    = var.GITLAB_TOKEN
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = aws_eks_cluster.magnifik.endpoint
+    cluster_ca_certificate = base64decode(aws_eks_cluster.magnifik.certificate_authority[0].data)
+    token                  = data.aws_eks_cluster_auth.default.token
+  }
 }

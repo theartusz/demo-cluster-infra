@@ -4,6 +4,10 @@ variable "GITHUB_TOKEN" {
   sensitive   = true
 }
 
+variable "GITLAB_TOKEN" {
+  type      = string
+  sensitive = true
+}
 variable "github" {
   type = object({
     owner           = string
