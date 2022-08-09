@@ -1,3 +1,10 @@
+variable "aws" {
+  type = object({
+    cluster_name = string
+    prefix_name  = string
+  })
+}
+
 variable "GITHUB_TOKEN" {
   description = "github token"
   type        = string

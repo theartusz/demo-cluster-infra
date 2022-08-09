@@ -2,7 +2,7 @@ resource "aws_eks_node_group" "bergen" {
   cluster_name    = aws_eks_cluster.magnifik.name
   node_group_name = "bergen"
   node_role_arn   = aws_iam_role.node.arn
-  subnet_ids      = ["subnet-001d39e3e8343874c", "subnet-082782f3c73db8513"]
+  subnet_ids      = [aws_subnet.public1.id, aws_subnet.public2.id]
   instance_types  = ["t3.small"]
 
   scaling_config {

@@ -1,9 +1,9 @@
 resource "aws_eks_cluster" "magnifik" {
-  name     = "example"
+  name     = var.aws.cluster_name
   role_arn = aws_iam_role.example.arn
 
   vpc_config {
-    subnet_ids = ["subnet-001d39e3e8343874c", "subnet-082782f3c73db8513"]
+    subnet_ids = [aws_subnet.public1.id, aws_subnet.public2.id]
   }
 
   # Ensure that IAM Role permissions are created before and deleted after EKS Cluster handling.
