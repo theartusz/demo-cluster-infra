@@ -3,3 +3,4 @@ Repository which holds configuration for demo kubernetes cluster. The configurat
 
 # Notes
 - when creating new `dns_zone` paste nameserver addresses to your domain registrar
+- setup env var for terraform as `set -x TF_VAR_GITHUB_TOKEN xxxx`
